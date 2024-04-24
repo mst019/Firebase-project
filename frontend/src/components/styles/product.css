@@ -1,0 +1,47 @@
+.product-container {
+  width: 40%;
+  height: 30vh;
+
+  display: grid;
+  grid-template-columns: 30% 40% 30%;
+
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 0.25rem 1.875rem rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0.3125rem);
+  -webkit-backdrop-filter: blur(0.3125rem);
+
+  border: 3px solid #378ce7;
+  padding: 5px;
+  margin: 15px 0px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #dff5ff;
+  padding: 20px 0px;
+  border-radius: 6px 12px;
+}
+
+.product-update {
+  padding: 5px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.product-update h3,
+label {
+  color: white;
+}
+
+.product-delete {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
