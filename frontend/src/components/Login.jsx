@@ -2,21 +2,29 @@ import React, { useState } from "react";
 import { auth, googleProvider } from "../config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import "./styles/login.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ setToken, setAuthStatus, authstatus }) => {
+const Login = ({}) => {
+  const navigate = useNavigate();
   const loginWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       if (auth.currentUser) {
-        const tokenvalue = await auth?.currentUser?.getIdToken();
+        const email = await auth?.currentUser?.email;
 
-        if (tokenvalue) {
-          setAuthStatus(true);
-          console.log("status:" + authstatus);
-          window.localStorage.setItem("auth", true);
-          setToken(tokenvalue);
-          window.localStorage.setItem("token", tokenvalue);
-        }
+        const emailData = { email: email };
+
+        const token = await axios.post(
+          "http://localhost:3000/login",
+          emailData
+        );
+        console.log("email sent successfully");
+
+        window.localStorage.setItem("auth", true);
+
+        window.localStorage.setItem("token", token.data);
+        navigate("/products");
       }
     } catch (err) {
       console.error(err);

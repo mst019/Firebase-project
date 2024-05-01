@@ -4,12 +4,26 @@ import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import Product from "./Product";
 import "./styles/products.css";
+import { useNavigate } from "react-router-dom";
 
-const Products = ({ token }) => {
+const Products = ({}) => {
   const [products, setProducts] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState(0);
   const [newAvailable, setNewAvailable] = useState(false);
+  const navigate = useNavigate();
+  const token = null || window.localStorage.getItem("token");
+
+  const signingOut = async () => {
+    try {
+      await signOut(auth);
+      window.localStorage.removeItem("auth");
+      window.localStorage.removeItem("token");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const addProduct = async () => {
     try {
@@ -24,18 +38,12 @@ const Products = ({ token }) => {
       console.log("product added successfully...");
       window.location.reload();
     } catch (err) {
-      console.error(err);
-    }
-  };
+      if (error.response && error.response.status === 419) {
+        // Token expired
 
-  const signingOut = async () => {
-    try {
-      await signOut(auth);
-      window.localStorage.removeItem("auth");
-      window.localStorage.removeItem("token");
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
+        alert("Session expired. Please log in again.");
+        signingOut();
+      } else console.error(err);
     }
   };
 
@@ -46,11 +54,19 @@ const Products = ({ token }) => {
           headers: { Authorization: "Bearer " + token },
         })
         .then((res) => {
-          setProducts(res.data);
-          console.log("list:", res.data);
-          console.log(products.length);
+          if (res.data === "token no longer valid") {
+            console.log("token alert: " + token.data);
+            alert("Session expired. Please log in again.");
+            signingOut();
+          } else {
+            setProducts(res.data);
+            console.log("list:", res.data);
+            console.log(products.length);
+          }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+        });
     };
     if (token) {
       fetchData(token);
